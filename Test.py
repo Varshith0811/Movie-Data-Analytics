@@ -6,7 +6,7 @@ class Test(unittest.TestCase):
 
   def testGetRating(self):
     title = 'Bladerunner'
-    self.assertEqual(getRating(title), 8.0, 'Blade Runner's rating should be equal to 8.0')
+    self.assertEqual(getRating(title), 8.0, "Blade Runner's rating should be equal to 8.0")
     
     
     
