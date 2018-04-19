@@ -13,8 +13,5 @@ if __name__ == '__main__':
 
     print('Enter the year of release or leave blank if unknown:')
     year = input()
-    if year == '':
-        year = None
-
 
     OMDBApi(title, type, year)
