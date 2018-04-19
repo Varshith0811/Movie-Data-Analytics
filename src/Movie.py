@@ -11,7 +11,5 @@ def OMDBApi(title, type, year):
     title = title.replace(' ', '+')
     type = 'movie'
 
-    #print('http://www.omdbapi.com/?t=' + title + '&type=' + type + '&y=' + year + '&apikey=dd666771')
-    movieJSON = requests.get('http://www.omdbapi.com/?t=' + title + '&type=' + type + '&y=' + year + '&apikey=dd666771').json()
-    parsed = json.dumps(movieJSON)
-    print(json.dumps(parsed, indent=4, sort_keys=True))
+    movie = requests.get('http://www.omdbapi.com/?t=' + title + '&type=' + type + '&y=' + year + '&apikey=dd666771').json()
+    return movie
