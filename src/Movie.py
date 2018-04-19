@@ -13,3 +13,23 @@ def OMDBApi(title, type, year):
 
     movie = requests.get('http://www.omdbapi.com/?t=' + title + '&type=' + type + '&y=' + year + '&apikey=dd666771').json()
     return movie
+
+def parseJSON(movie):
+    for k, v in movie.items():
+        if k == "Ratings":
+            print(k + ": ")
+            for x in range(len(v)):
+                for y, z in v[x].items():
+                    if y == "Source":
+                        temp = z
+                    else:
+                        print(temp + ": " + z)
+        else:
+            print(k + ": " + v)
+
+def getPoster(movie):
+    poster = 'https://www.classicposters.com/images/nopicture.gif'
+    for k, v in movie.items():
+        if k == "Poster":
+            poster = v
+    return poster
