@@ -15,17 +15,22 @@ def OMDBApi(title, type, year):
     return movie
 
 def parseJSON(movie):
+    movieData = ''
     for k, v in movie.items():
         if k == "Ratings":
-            print(k + ": ")
+            #print(k + ": ")
+            movieData += k + ":\n"
             for x in range(len(v)):
                 for y, z in v[x].items():
                     if y == "Source":
                         temp = z
                     else:
-                        print(temp + ": " + z)
+                        #print(temp + ": " + z)
+                        movieData += "   " + temp + ": " + z + "\n"
         else:
-            print(k + ": " + v)
+            #print(k + ": " + v)
+            movieData += k + ": " + v + "\n"
+    return movieData
 
 def getPoster(movie):
     poster = 'https://www.classicposters.com/images/nopicture.gif'
