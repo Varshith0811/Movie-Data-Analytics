@@ -43,4 +43,8 @@ train_features, test_features, train_labels, test_labels = train_test_split(feat
 # Instantiate model with 1000 decision trees
 rf = RandomForestRegressor(n_estimators = 1000, random_state = 42)
 # Train the model on training data
-rf.fit(train_features, train_labels);
+rf.fit(train_features, train_labels)
+
+# Use the forest's predict method on the test data
+predictions = rf.predict(test_features)
+print(np.mean(predictions))
