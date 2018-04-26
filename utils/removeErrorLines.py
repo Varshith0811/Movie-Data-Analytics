@@ -33,7 +33,7 @@ for index, line in enumerate(oldLines):
             indexOfBadLines += 1
     elif '\\' in line:
         line = line.replace('\\', '')
-        newFile.write(line)
+        #newFile.write(line)
         numberOfNonFloats += 1
         print('Non-Float detected: ' + str(numberOfNonFloats))
     else:
