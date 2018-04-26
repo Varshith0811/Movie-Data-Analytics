@@ -4,62 +4,56 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import export_graphviz
 import pydot
-'''
-Predicting by:
-imbdbRating
-ratingCount
-nrOfWins
-nrOfNomiations
-nrOfPhotos
-nrOfNewsArticles
-nrOfUserReviews
-Genre
-'''
+import csv
+def predictRating(inputNom, inputGenre, inputRating, inputLength):
+    #Inputs from OMDB
+    if not isinstance(inputNom, float):
+        inputNom = 0
+    if not isinstance(inputLength, float):
+        inputLength = 5400
+    if not isinstance(inputRating, float):
+        inputRating = 25000
 
-'''For Testing:'''
-#features = pd.read_csv('../data/temps.csv')
+    dataSize = 0
+    genreCount = 0
+    main = pd.read_csv('../data/imdb.csv', error_bad_lines=False, dtype='float')
+    ofile  = open('../data/temp.csv', "w")
+    writer = csv.writer(ofile, delimiter=',', lineterminator = '\n')
+    writer.writerow(main.head())
+    for i, row in main.iterrows():
+        genreCount = 0
+        for g in inputGenre:
+            if row[g] == 1:
+                 genreCount = genreCount+1
+        '''
+        Within:
+        Nominations: 5
+        Ratings: 30000 -> move it to 25%
+        Movie Duration: 30min
+        '''
+        if abs(row['nrOfNominations']-inputNom) <= 5 and abs(row['ratingCount']-inputRating) <= 30000 and abs(row['duration']-inputLength) >= 1800 and genreCount >= 2:
+            writer.writerow(row)
+            dataSize = dataSize+1
+    ofile.close()
 
-'''Actual:'''
+    features = pd.read_csv('../data/temp.csv', error_bad_lines=False)
 
-features = pd.read_csv('../data/imdb.csv', error_bad_lines=False)
+    labels = np.array(features['imdbRating'])
 
-#One-Hot Encoding
-#features = pd.get_dummies(features, sparse=True)
+    features= features.drop('imdbRating', axis = 1)
 
-# Labels are the values we want to predict
-labels = np.array(features['imdbRating'])
+    feature_list = list(features.columns)
 
-# Remove the labels from the features
-# axis 1 refers to the columns
-features= features.drop('imdbRating', axis = 1)
+    features = np.array(features)
 
-# Saving feature names for later use
-feature_list = list(features.columns)
+    #Split the data into training and testing sets
+    train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size = 0.25)
 
-# Convert to numpy array
-features = np.array(features)
+    #1000 decision trees
+    rf = RandomForestRegressor(n_estimators = 1000)
+    #Train the model on training data
+    rf.fit(train_features, train_labels)
 
-# Split the data into training and testing sets
-train_features, test_features, train_labels, test_labels = train_test_split(features, labels, test_size = 0.25, random_state = 42)
-
-# Instantiate model with 1000 decision trees
-rf = RandomForestRegressor(n_estimators = 1000, random_state = 42)
-# Train the model on training data
-rf.fit(train_features, train_labels)
-
-# Use the forest's predict method on the test data
-predictions = rf.predict(test_features)
-print(np.mean(predictions))
-
-
-# Pull out one tree from the forest
-tree = rf.estimators_[5]
-
-# Export the image to a dot file
-export_graphviz(tree, out_file = '../data/tree.dot', feature_names = feature_list, rounded = True, precision = 1)
-
-# Use dot file to create a graph
-(graph, ) = pydot.graph_from_dot_file('../data/tree.dot')
-
-# Write graph to a png file
-graph.write_png('../data/tree.png')
+    #Predict
+    predictions = rf.predict(test_features)
+    return (np.mean(predictions), dataSize)

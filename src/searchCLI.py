@@ -1,4 +1,4 @@
-from Movie import OMDBApi
+import movie
 
 if __name__ == '__main__':
     title = ''
@@ -14,5 +14,5 @@ if __name__ == '__main__':
     print('Enter the year of release or leave blank if unknown:')
     year = input()
 
-    movie = OMDBApi(title, type, year)
-    parseJSON(movie)
+    movieInfo = movie.OMDBApi(title, type, year)
+    movie.parseJSON(movieInfo)

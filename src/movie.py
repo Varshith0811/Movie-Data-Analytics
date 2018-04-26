@@ -35,6 +35,6 @@ def parseJSON(movie):
 def getPoster(movie):
     poster = 'https://www.classicposters.com/images/nopicture.gif'
     for k, v in movie.items():
-        if k == "Poster":
+        if k == "Poster" and v != "N/A":
             poster = v
     return poster

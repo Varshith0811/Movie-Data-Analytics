@@ -2,8 +2,8 @@ from tkinter import *
 from PIL import Image, ImageTk
 from io import BytesIO
 
-from Movie import *
-
+from movie import *
+from machineLearning import predictRating
 
 window = Tk()
 searchFrame = Frame()
@@ -30,8 +30,8 @@ searchButton.wait_variable(waitVariable)
 title = titleEntry.get()
 year = yearEntry.get()
 
-movie = OMDBApi(title, 'movie', year)
-movieData = parseJSON(movie)
+movieInfo = OMDBApi(title, 'movie', year)
+movieData = parseJSON(movieInfo)
 
 
 searchFrame.grid_forget()
@@ -39,9 +39,18 @@ window.title(title + ' - ' + year)
 resultsFrame = Frame()
 resultsFrame.grid()
 resultsFrame.tkraise()
-
 movieData = ''
-for k, v in movie.items():
+for k, v in movieInfo.items():
+    if k == "Runtime":
+        outputLength = v
+    elif k == "Awards":
+        outputNom = v
+    elif k == "imdbVotes":
+        outputRating = v
+    elif k == "Genre":
+        outputGenre = v.split(", ")
+    elif k == "imdbRating":
+        actualScore = v
     if k == "Ratings":
         #print(k + ": ")
         movieData = k + ":"
@@ -57,7 +66,7 @@ for k, v in movie.items():
         movieData = k + ": " + v
     movieDataLabel = Label(resultsFrame, text = movieData).grid(sticky = W)
 
-posterURL = getPoster(movie)
+posterURL = getPoster(movieInfo)
 response = requests.get(posterURL)
 image = Image.open(BytesIO(response.content))
 poster = ImageTk.PhotoImage(image)
@@ -65,5 +74,20 @@ posterLabel = Label(image=poster)
 posterLabel.image = poster # keeps a reference to avoid Python garbage collection removing image while still being displayed by Tk
 posterLabel.grid(row = 0, column = 3, padx = 20)
 
+#Need to prep data to be sent to machineLearning.py
+#outputLength, outputNom, outputGenre, outputRating, actualScore
 
+outputLength = float(outputLength.split(" ")[0])*60.0
+outputNom = outputNom.split(" ")[0]
+#formatting isn't nice for noms
+actualScore = float(actualScore)
+for i, g in enumerate(outputGenre):
+    if g == "Sci-Fi":
+        outputGenre[i] = "SciFi"
+outputRating = float(outputRating.replace(",", ""))
+predictedRating, dataSize = predictRating(outputNom, outputGenre, outputRating, outputLength)
+print("Actual Rating: " + str(actualScore))
+print("Predicted Rating: " + str(predictedRating))
+print("Difference: " + str((predictedRating - actualScore)))
+print("Dataset Size: " + str(dataSize))
 window.mainloop()
