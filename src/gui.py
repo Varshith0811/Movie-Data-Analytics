@@ -91,11 +91,6 @@ def searchAndPredict():
             outputGenre[i] = "SciFi"
     outputRating = float(outputRating.replace(",", ""))
     predictedRating, dataSize = predictRating(outputNom, outputGenre, outputRating, outputLength)
-    print("Actual Rating: " + str(actualScore))
-    print("Predicted Rating: " + str(predictedRating))
-    print("Difference: " + str((predictedRating - actualScore)))
-    print("Dataset Size: " + str(dataSize))
-    print("Percent Error: " + str(abs(((predictedRating - actualScore)/actualScore)*100)) + "%")
 
     #Display Predictions
     predictions = LabelFrame(resultsFrame, text="Prediction", padx=5, pady=5)
@@ -117,5 +112,4 @@ def searchAndPredict():
 
 def restart(window):
     window.destroy()
-    print('\n')
     searchAndPredict()
