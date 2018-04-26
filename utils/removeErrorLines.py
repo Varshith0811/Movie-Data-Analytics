@@ -31,7 +31,7 @@ for index, line in enumerate(oldLines):
         print(indexOfBadLines)
         if int(listOfLineNums[indexOfBadLines]) < 14688:
             indexOfBadLines += 1
-    elif isinstance(currentLineArray[5], str):
+    elif '\\' in line:
         line = line.replace('\\', '')
         newFile.write(line)
         numberOfNonFloats += 1
