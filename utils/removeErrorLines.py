@@ -15,20 +15,27 @@ with open('../data/errorLines.txt', 'r') as errorLines:
 print(len(listOfLineNums)) #result was 429
 
 
-oldFile = open('../data/imdb.csv', 'r')
+oldFile = open('../data/imdb.backup', 'r')
 oldLines = oldFile.readlines()
 oldFile.close()
 
 indexOfBadLines = 0
+numberOfNonFloats = 0
 
-newFile = open('../data/newFile.csv', 'w')
+newFile = open('../data/imdb.csv', 'w')
 
 for index, line in enumerate(oldLines):
     #print(listOfLineNums[indexOfBadLines])
+    currentLineArray = line.split(',')
     if index == int(listOfLineNums[indexOfBadLines]):
         print(indexOfBadLines)
         if int(listOfLineNums[indexOfBadLines]) < 14688:
             indexOfBadLines += 1
+    elif isinstance(currentLineArray[5], str):
+        line = line.replace('\\', '')
+        newFile.write(line)
+        numberOfNonFloats += 1
+        print('Non-Float detected: ' + str(numberOfNonFloats))
     else:
         newFile.write(line)
 newFile.close()
