@@ -1,10 +1,13 @@
 # Movie-Data-Analytics
-Provide useful information based on movie data
+######A tool to predict the IMDB rating of a movie using machine learning.
 
-#Dependencies
-Pillow
-pandas
-scipy
-scikit-learn
+###Features:
+* Predict the IMDB rating of any movie
+* Pr
 
-<!-- [![build status of master](https://travis-ci.org/robjweiss/Movie-Data-Analytics.svg?branch=master)](https://travis-ci.org/robjweiss/Movie-Data-Analytics) -->
+##Dependencies
+* tkinter (May be included on some Windows installations, but is not included with all Linux Distros)
+* Pillow
+* pandas
+* scipy
+* scikit-learn
