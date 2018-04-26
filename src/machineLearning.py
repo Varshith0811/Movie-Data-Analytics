@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.tree import export_graphviz
+import pydot
 '''
 Predicting by:
 imbdbRating
@@ -48,3 +50,16 @@ rf.fit(train_features, train_labels)
 # Use the forest's predict method on the test data
 predictions = rf.predict(test_features)
 print(np.mean(predictions))
+
+
+# Pull out one tree from the forest
+tree = rf.estimators_[5]
+
+# Export the image to a dot file
+export_graphviz(tree, out_file = '../data/tree.dot', feature_names = feature_list, rounded = True, precision = 1)
+
+# Use dot file to create a graph
+(graph, ) = pydot.graph_from_dot_file('../data/tree.dot')
+
+# Write graph to a png file
+graph.write_png('../data/tree.png')
