@@ -8,11 +8,11 @@ import csv
 def predictRating(inputNom, inputGenre, inputRating, inputLength):
     #Inputs from OMDB
     if not isinstance(inputNom, float):
-        inputNom = 0
+        inputNom = -1
     if not isinstance(inputLength, float):
-        inputLength = 5400
+        inputLength = 5400 #90min
     if not isinstance(inputRating, float):
-        inputRating = 25000
+        inputRating = -1
 
     dataSize = 0
     genreCount = 0
@@ -20,20 +20,68 @@ def predictRating(inputNom, inputGenre, inputRating, inputLength):
     ofile  = open('../data/temp.csv', "w")
     writer = csv.writer(ofile, delimiter=',', lineterminator = '\n')
     writer.writerow(main.head())
-    for i, row in main.iterrows():
-        genreCount = 0
-        for g in inputGenre:
-            if row[g] == 1:
-                 genreCount = genreCount+1
-        '''
-        Within:
-        Nominations: 5
-        Ratings: 30000 -> move it to 25%
-        Movie Duration: 30min
-        '''
-        if abs(row['nrOfNominations']-inputNom) <= 5 and abs(row['ratingCount']-inputRating) <= 30000 and abs(row['duration']-inputLength) >= 1800 and genreCount >= 2:
-            writer.writerow(row)
-            dataSize = dataSize+1
+    if inputNom != -1:
+        for i, row in main.iterrows():
+            genreCount = 0
+            for g in inputGenre:
+                if row[g] == 1:
+                    genreCount = genreCount+1
+            '''
+            Within:
+            Nominations: 15
+            Ratings: +/- 25%
+            Movie Duration: 30min
+            Genre: At least 50% same genres
+            '''
+            if abs(row['nrOfNominations']-inputNom) <= 15 and abs(row['ratingCount']-inputRating) <= row['ratingCount']*.25 and abs(row['duration']-inputLength) >= 1800 and genreCount/len(inputGenre) >= 0.5:
+                writer.writerow(row)
+                dataSize = dataSize+1
+    #For when Noms doesn't come in
+    elif inputNom == -1:
+        for i, row in main.iterrows():
+            genreCount = 0
+            for g in inputGenre:
+                if row[g] == 1:
+                    genreCount = genreCount+1
+            '''
+            Within:
+            NO NOMS
+            Ratings: +/- 25%
+            Movie Duration: 30min
+            Genre: At least 50% same genres
+            '''
+            if abs(row['ratingCount']-inputRating) <= row['ratingCount']*.25 and abs(row['duration']-inputLength) >= 1800 and genreCount/len(inputGenre) >= 0.5:
+                writer.writerow(row)
+                dataSize = dataSize+1
+    #For when Rating numbers don't come in
+    elif inputRating == -1:
+        for i, row in main.iterrows():
+            genreCount = 0
+            for g in inputGenre:
+                if row[g] == 1:
+                    genreCount = genreCount+1
+            '''
+            Within:
+            Noms: 15
+            NO RATINGS
+            Movie Duration: 30min
+            Genre: At least 50% same genres
+            '''
+            if abs(row['nrOfNominations']-inputNom) <= 15 and abs(row['duration']-inputLength) >= 1800 and genreCount/len(inputGenre) >= 0.5:
+                writer.writerow(row)
+                dataSize = dataSize+1
+    '''This is for when it returns 0 rows -> it'll default to only finding similar genre movies'''
+    if dataSize == 0:
+        for i, row in main.iterrows():
+            genreCount = 0
+            for g in inputGenre:
+                if row[g] == 1:
+                     genreCount = genreCount+1
+            #Only with genres
+            if genreCount/len(inputGenre) >= 0.5:
+                writer.writerow(row)
+                dataSize = dataSize+1
+
     ofile.close()
 
     features = pd.read_csv('../data/temp.csv', error_bad_lines=False)
