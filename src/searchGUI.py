@@ -64,7 +64,8 @@ for k, v in movieInfo.items():
     else:
         #print(k + ": " + v)
         movieData = k + ": " + v
-    movieDataLabel = Label(resultsFrame, text = movieData).grid(sticky = W)
+    movieDataLabel = Label(resultsFrame, text = movieData)
+    movieDataLabel.grid(sticky = W)
 
 posterURL = getPoster(movieInfo)
 response = requests.get(posterURL)
@@ -73,6 +74,20 @@ poster = ImageTk.PhotoImage(image)
 posterLabel = Label(image=poster)
 posterLabel.image = poster # keeps a reference to avoid Python garbage collection removing image while still being displayed by Tk
 posterLabel.grid(row = 0, column = 3, padx = 20)
+
+# window.update()
+# print(window.winfo_width())
+# print(movieDataLength)
+
+# f=Frame(height = 3, width = window.winfo_width() - 1000, pady = 10, bg="black")
+# f.grid(sticky = 'ew')
+
+# actualRatingStr = "Actual Rating: " + str(actualScore)
+# predictedRatingStr = "Predicted Rating: " + str(predictedRating)
+# differenceStr = "Difference: " + str((predictedRating - actualScore))
+# datasetSizeStr = "Dataset Size: " + str(dataSize)
+
+
 
 #Need to prep data to be sent to machineLearning.py
 #outputLength, outputNom, outputGenre, outputRating, actualScore
@@ -90,4 +105,12 @@ print("Actual Rating: " + str(actualScore))
 print("Predicted Rating: " + str(predictedRating))
 print("Difference: " + str((predictedRating - actualScore)))
 print("Dataset Size: " + str(dataSize))
+
+predictions = LabelFrame(resultsFrame, text="Prediction", padx=5, pady=5)
+predictions.grid(row = 26, padx = 5, pady = 20, sticky = W)
+predictionLabel = Label(predictions, text = "Actual Rating: " + str(actualScore)).grid(sticky = 'w')
+predictionLabel = Label(predictions, text = "Predicted Rating: " + str(predictedRating)).grid(sticky = 'w')
+predictionLabel = Label(predictions, text = "Difference: " + str((predictedRating - actualScore))).grid(sticky = 'w')
+predictionLabel = Label(predictions, text = "Dataset Size: " + str(dataSize)).grid(sticky = 'w')
+
 window.mainloop()
